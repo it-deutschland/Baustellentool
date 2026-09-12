@@ -1,0 +1,45 @@
+Options -Indexes
+Options -MultiViews
+
+RewriteEngine On
+RewriteBase /
+
+# ── Install redirect (disabled) ───────────────────────────────────────────
+# These rules caused ERR_TOO_MANY_REDIRECTS when the install folder was renamed
+# and config.php did not yet exist. They are intentionally disabled.
+# The install folder has been renamed; config.php must be created manually.
+
+# Block access to sensitive directories
+RewriteRule ^(src|database|sicherungen|infos|speicher|vendor)/ - [F,L]
+RewriteRule ^config\.php$ - [F,L]
+RewriteRule ^composer\.(json|lock)$ - [F,L]
+RewriteRule ^\.env$ - [F,L]
+
+# Allow direct access to assets
+RewriteCond %{REQUEST_URI} ^/assets/ [OR]
+RewriteCond %{REQUEST_URI} ^/dateien/
+RewriteRule ^ - [L]
+
+# Backward compatibility: old upload URL prefix
+RewriteRule ^uploads/(.*)$ /dateien/$1 [R=301,L]
+
+# Front controller
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [QSA,L]
+
+# Security headers
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# Disable PHP execution in dateien directory
+<IfModule mod_php.c>
+    <FilesMatch "\.php$">
+        Order allow,deny
+        Allow from all
+    </FilesMatch>
+</IfModule>

@@ -1,0 +1,13 @@
+<?php
+
+use App\Core\CSRF;
+use App\Core\View;
+
+require_once VIEWS_PATH . '/_helpers.php';
+
+$documents = rsa21_data_list($documents ?? []);
+$typeLabels = ['vra' => 'VRA', 'signlist' => 'Zeichenliste', 'materiallist' => 'Materialliste', 'dailyreport' => 'Tagesbericht', 'sitecheck' => 'Baustellenkontrolle', 'acceptance' => 'Abnahme', 'report' => 'Bericht', 'other' => 'Sonstiges'];
+$statusClasses = ['draft' => 'bg-secondary', 'review' => 'bg-warning text-dark', 'approved' => 'bg-success', 'archived' => 'bg-dark'];
+?>
+<div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4"><div><h1 class="h2 mb-1">Dokumente</h1><p class="text-body-secondary mb-0">Alle erzeugten Dokumente mit Typ, Status und Projektbezug.</p></div><form method="get" action="/documents" class="row g-2 align-items-end"><?= CSRF::field() ?><div class="col-auto"><label for="document-search" class="form-label">Suche</label><input type="search" class="form-control" id="document-search" name="search" value="<?= View::e((string) ($search ?? '')) ?>"></div><div class="col-auto"><button type="submit" class="btn btn-outline-primary">Filtern</button></div></form></div>
+<div class="card shadow-sm"><div class="table-responsive"><table class="table table-hover align-middle mb-0"><thead><tr><th>Dokument</th><th>Typ</th><th>Status</th><th>Projekt</th><th>Aktualisiert</th><th class="text-end">Aktionen</th></tr></thead><tbody><?php if ($documents === []): ?><tr><td colspan="6" class="text-center text-body-secondary py-5">Keine Dokumente vorhanden.</td></tr><?php endif; ?><?php foreach ($documents as $document): ?><?php $status = (string) rsa21_data_get($document, 'status', 'draft'); ?><tr><td><div class="fw-semibold"><?= View::e((string) rsa21_data_get($document, 'title', 'Dokument')) ?></div><div class="small text-body-secondary">Version <?= View::e((string) rsa21_data_get($document, 'version', '1')) ?></div></td><td><span class="badge text-bg-light"><?= View::e($typeLabels[(string) rsa21_data_get($document, 'type', 'other')] ?? 'Sonstiges') ?></span></td><td><span class="badge <?= View::e($statusClasses[$status] ?? 'bg-secondary') ?>"><?= View::e((string) rsa21_data_get($document, 'status', 'draft')) ?></span></td><td><?= View::e((string) rsa21_data_get($document, 'project_title', '—')) ?></td><td><?= rsa21_date(rsa21_data_get($document, 'updated_at', '')) ?></td><td class="text-end"><a href="/documents/<?= View::e((string) rsa21_data_get($document, 'id', '')) ?>" class="btn btn-sm btn-outline-primary">Öffnen</a></td></tr><?php endforeach; ?></tbody></table></div></div>

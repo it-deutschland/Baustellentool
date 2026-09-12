@@ -1,0 +1,12 @@
+<?php
+
+use App\Core\CSRF;
+use App\Core\View;
+
+require_once VIEWS_PATH . '/_helpers.php';
+
+$project = $project ?? [];
+$templates = rsa21_data_list($templates ?? []);
+$type = (string) ($type ?? 'other');
+?>
+<div class="row justify-content-center"><div class="col-xl-8"><div class="card shadow-sm"><div class="card-header"><h1 class="h4 mb-0">Neues Dokument für <?= View::e((string) rsa21_data_get($project, 'title', 'Projekt')) ?></h1></div><div class="card-body"><form method="post" action="/projects/<?= View::e((string) rsa21_data_get($project, 'id', '')) ?>/documents" class="row g-3"><?= CSRF::field() ?><div class="col-md-6"><label for="type" class="form-label">Dokumenttyp</label><select class="form-select" id="type" name="type"><option value="vra" <?= $type === 'vra' ? 'selected' : '' ?>>Verkehrsrechtliche Anordnung</option><option value="signlist" <?= $type === 'signlist' ? 'selected' : '' ?>>Verkehrszeichenliste</option><option value="materiallist" <?= $type === 'materiallist' ? 'selected' : '' ?>>Materialliste</option><option value="dailyreport" <?= $type === 'dailyreport' ? 'selected' : '' ?>>Tagesbericht</option><option value="sitecheck" <?= $type === 'sitecheck' ? 'selected' : '' ?>>Baustellenkontrolle</option><option value="acceptance" <?= $type === 'acceptance' ? 'selected' : '' ?>>Abnahmeprotokoll</option><option value="report" <?= $type === 'report' ? 'selected' : '' ?>>Projektbericht</option><option value="other" <?= $type === 'other' ? 'selected' : '' ?>>Sonstiges</option></select></div><div class="col-md-6"><label for="title" class="form-label">Titel</label><input type="text" class="form-control" id="title" name="title" value="<?= View::e((string) ($title ?? '')) ?>" required></div><div class="col-12"><label for="template_id" class="form-label">Vorlage</label><select class="form-select" id="template_id" name="template_id"><option value="">Ohne Vorlage starten</option><?php foreach ($templates as $template): ?><option value="<?= View::e((string) rsa21_data_get($template, 'id', '')) ?>" data-type="<?= View::e((string) rsa21_data_get($template, 'type', '')) ?>"><?= View::e((string) rsa21_data_get($template, 'name', 'Vorlage')) ?></option><?php endforeach; ?></select><div class="form-text">Nur Vorlagen des gewählten Dokumenttyps sollten angeboten werden.</div></div><div class="col-12 d-flex justify-content-end gap-2"><a href="/documents" class="btn btn-outline-secondary">Abbrechen</a><button type="submit" class="btn btn-primary">Dokument erstellen</button></div></form></div></div></div></div>

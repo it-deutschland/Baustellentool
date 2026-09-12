@@ -1,0 +1,11 @@
+<?php
+
+use App\Core\CSRF;
+use App\Core\View;
+
+require_once VIEWS_PATH . '/_helpers.php';
+
+$notifications = rsa21_data_list($notifications ?? []);
+?>
+<div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4"><div><h1 class="h2 mb-1">Benachrichtigungen</h1><p class="text-body-secondary mb-0">Alle Hinweise, Systemmeldungen und Aktivitäten im Überblick.</p></div><form method="post" action="/notifications/read-all"><?= CSRF::field() ?><button type="submit" class="btn btn-outline-primary"><i class="bi bi-check2-all me-2"></i>Alle als gelesen markieren</button></form></div>
+<div class="list-group shadow-sm"><?php if ($notifications === []): ?><div class="list-group-item text-body-secondary py-5 text-center">Keine Benachrichtigungen vorhanden.</div><?php endif; ?><?php foreach ($notifications as $notification): ?><?php $isRead = (string) rsa21_data_get($notification, 'read_at', '') !== ''; ?><div class="list-group-item list-group-item-action <?= $isRead ? '' : 'list-group-item-light' ?>"><div class="d-flex flex-column flex-lg-row justify-content-between gap-3"><div><div class="d-flex align-items-center gap-2 mb-1"><h2 class="h6 mb-0"><?= View::e((string) rsa21_data_get($notification, 'title', 'Benachrichtigung')) ?></h2><span class="badge <?= $isRead ? 'text-bg-secondary' : 'text-bg-primary' ?>"><?= $isRead ? 'Gelesen' : 'Neu' ?></span></div><p class="mb-1"><?= View::e((string) rsa21_data_get($notification, 'message', '')) ?></p><div class="small text-body-secondary"><?= rsa21_date(rsa21_data_get($notification, 'created_at', '')) ?> · <?= View::e((string) rsa21_data_get($notification, 'type', 'system')) ?></div><?php if ((string) rsa21_data_get($notification, 'link', '') !== ''): ?><a href="<?= View::e((string) rsa21_data_get($notification, 'link', '')) ?>" class="small text-decoration-none">Verknüpfung öffnen</a><?php endif; ?></div><?php if (!$isRead): ?><form method="post" action="/notifications/read/<?= View::e((string) rsa21_data_get($notification, 'id', '')) ?>" class="align-self-start"><?= CSRF::field() ?><button type="submit" class="btn btn-sm btn-outline-primary">Als gelesen markieren</button></form><?php endif; ?></div></div><?php endforeach; ?></div>
