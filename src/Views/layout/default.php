@@ -56,7 +56,7 @@ $navGroups = [
 <body class="bg-body-tertiary">
 <div class="container-fluid">
     <div class="row min-vh-100 flex-nowrap">
-        <aside class="col-12 col-lg-3 col-xxl-2 px-0">
+        <aside class="col-auto col-lg-3 col-xxl-2 px-0">
             <div class="offcanvas-lg offcanvas-start border-end bg-body" tabindex="-1" id="appSidebar">
                 <div class="offcanvas-header border-bottom">
                     <h1 class="offcanvas-title h4 mb-0">Sonka Bau & Sonnenimmobilien - Multi Administration</h1>
